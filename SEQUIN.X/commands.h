@@ -1,4 +1,5 @@
 // Single-byte commands
+#define SYN_STARTUP_DONE 0x7E
 #define SYN_PLAYBACK_START 0x7F
 #define SYN_PLAYBACK_STOP 0x80
 #define SYN_REC_START 0x81
@@ -26,4 +27,3 @@
 #define SYN_CLEAR_KEY 0x93
 #define SYN_SET_BASS 0x94 // Not implemented
 #define SYN_SET_OCTAVE 0x95
-#define SYN_STARTUP_DONE 0x96

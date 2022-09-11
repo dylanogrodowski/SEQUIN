@@ -14,7 +14,10 @@ build/default/debug/main.o.d build/default/debug/main.o: main.c \
  c:\program\ files\microchip\xc8\v2.36\avr\avr\include\avr\fuse.h \
  c:\program\ files\microchip\xc8\v2.36\avr\avr\include\avr\lock.h \
  c:\program\ files\microchip\xc8\v2.36\avr\avr\include\avr\interrupt.h \
- memory.h spi.h
+ c:\program\ files\microchip\xc8\v2.36\avr\avr\include\util\delay.h \
+ c:\program\ files\microchip\xc8\v2.36\avr\avr\include\util\delay_basic.h \
+ c:\program\ files\microchip\xc8\v2.36\avr\avr\include\math.h memory.h \
+ spi.h uart.h commands.h gpio.h
 
 c:\program\ files\microchip\xc8\v2.36\avr\avr\include\avr\io.h:
 
@@ -46,6 +49,18 @@ c:\program\ files\microchip\xc8\v2.36\avr\avr\include\avr\lock.h:
 
 c:\program\ files\microchip\xc8\v2.36\avr\avr\include\avr\interrupt.h:
 
+c:\program\ files\microchip\xc8\v2.36\avr\avr\include\util\delay.h:
+
+c:\program\ files\microchip\xc8\v2.36\avr\avr\include\util\delay_basic.h:
+
+c:\program\ files\microchip\xc8\v2.36\avr\avr\include\math.h:
+
 memory.h:
 
 spi.h:
+
+uart.h:
+
+commands.h:
+
+gpio.h:

@@ -33,6 +33,20 @@ uint8_t mem_read_single(uint8_t addr_h, uint8_t addr_m, uint8_t addr_l)
     return data;
 }
 
+// Start a read without closing it to allow for sequential reads
+// Returns the data value at the start location
+uint8_t mem_read_start(uint8_t addr_h, uint8_t addr_m, uint8_t addr_l)
+{
+    PORTB &= ~CS_BITMASK; // Set CS low
+    spi_write(MEM_READ_ISTR);
+    spi_write(addr_h);
+    spi_write(addr_m);
+    spi_write(addr_l);
+    uint8_t data = spi_read();
+    
+    return data;
+}
+
 void mem_erase()
 {
     mem_write_enable();

@@ -2,6 +2,7 @@
 
 void init_uart()
 {
+    DDRE |= 0x02; // Set TX pin as an output
     UCSR0B |= 0x18; // Enable RX and TX
     UCSR0C |= 0x76; // Async, odd parity, 1 stop bit
     UBRR0H |= 0x00; // Set baud rate to 9600 bps

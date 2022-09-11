@@ -13,6 +13,7 @@
 void mem_write_enable();
 void mem_write_single(uint8_t data, uint8_t addr_h, uint8_t addr_m, uint8_t addr_l);
 uint8_t mem_read_single(uint8_t addr_h, uint8_t addr_m, uint8_t addr_l);
+uint8_t mem_read_start(uint8_t addr_h, uint8_t addr_m, uint8_t addr_l);
 uint8_t mem_read_status();
 void mem_wait();
 uint8_t mem_manufacturer_ID();

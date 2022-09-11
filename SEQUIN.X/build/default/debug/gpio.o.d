@@ -1,5 +1,4 @@
-build/default/production/newavr-main.o.d \
- build/default/production/newavr-main.o: newavr-main.c \
+build/default/debug/gpio.o.d build/default/debug/gpio.o: gpio.c gpio.h \
  c:\program\ files\microchip\xc8\v2.36\avr\avr\include\avr\io.h \
  c:\program\ files\microchip\xc8\v2.36\avr\avr\include\avr\sfr_defs.h \
  c:\program\ files\microchip\xc8\v2.36\avr\avr\include\inttypes.h \
@@ -14,6 +13,8 @@ build/default/production/newavr-main.o.d \
  c:\program\ files\microchip\xc8\v2.36\avr\avr\include\avr\common.h \
  c:\program\ files\microchip\xc8\v2.36\avr\avr\include\avr\fuse.h \
  c:\program\ files\microchip\xc8\v2.36\avr\avr\include\avr\lock.h
+
+gpio.h:
 
 c:\program\ files\microchip\xc8\v2.36\avr\avr\include\avr\io.h:
 

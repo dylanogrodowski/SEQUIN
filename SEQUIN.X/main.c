@@ -1,8 +1,7 @@
 // SEQUIN
-// 6/24/2022
+// 9/3/2022
 // Dylan Ogrodowski
-// Version 0.10
-// Change-based storage
+// Version 0.11
 
 // TO DO:
 // RECORD LED AND PLAYBACK LED NOT YET CONFIGURED
@@ -10,8 +9,6 @@
 // New rx receiver logic
 // If prev data exists, clear mem
 // TO DO: HANDLING FOR STOP COMMANDS / MULTI BYTE COMMANDS during recording
-
-
 
 #include <avr/io.h>
 #include <avr/interrupt.h>
@@ -58,6 +55,11 @@ uint8_t debounce(uint8_t bitmask);
 
 volatile uint8_t overflow_count = 0;
 volatile uint8_t new_rx_received = 0;
+volatile uint8_t waiting_for_compare_interrupt = 0;
+
+uint8_t target_delay_low = 0;
+uint8_t target_delay_high = 0;
+uint8_t target_delay_overflow = 0;
 
 uint8_t current_track = 0;
 uint8_t addr_h = 0;
@@ -65,6 +67,8 @@ uint8_t addr_m = 0;
 uint16_t local_addr = 0; // 12-bit byte position within the 4 kB track
 uint8_t mode = IDLE;
 uint8_t switches = 0;
+
+uint8_t expecting_data = 0; // Flag that is set when a two-byte command is received, and cleared when the data byte is read
 
 int main(void) 
 {
@@ -75,8 +79,16 @@ int main(void)
     
     uint8_t manufacturer_ID = mem_manufacturer_ID(); // DEBUG: Memory test
     
+    /*
+    // Memory test sequence
     mem_write_single(0xAA, 0x00, 0x00, 0x00); // DEBUG: Memory test
     uint8_t test_data = mem_read_single(0x00, 0x00, 0x00); // DEBUG: Memory test
+    mem_erase();
+    mem_wait();
+    mem_write_single(0xFD, 0x00, 0x00, 0x00); // DEBUG: Memory test
+    test_data = mem_read_single(0x00, 0x00, 0x00); // DEBUG: Memory test
+    asm("NOP");
+    */
     
     sei(); // Enable global interrupts
     
@@ -86,57 +98,109 @@ int main(void)
         {
             case(IDLE):
                 // Check for button presses, update LCD
-                switches = PORTJ | (PORTF & PREV_BITMASK);
+                switches = PINJ | (PINF & PREV_BITMASK);
                 if (switches & PREV_BITMASK)
                 {
                     if(!debounce(PREV_BITMASK)) break; // Restart loop if press was a bounce
-                    
                     prev_track();
                 }
                 else if (switches & NEXT_BITMASK)
                 {
                     if(!debounce(NEXT_BITMASK)) break; // Restart loop if press was a bounce
-                    
                     next_track();
                 }
                 else if (switches & REC_SW_BITMASK)
                 {
                     if(!debounce(REC_SW_BITMASK)) break;
-                    
                     rec_startup_sequence();
                 }
                 else if (switches & PLAYBACK_SW_BITMASK)
                 {
                     if(!debounce(PLAYBACK_SW_BITMASK)) break;
-                    
                     playback_startup_sequence();
                 }
                 break;
             case(RECORD):
-                while (!(UCSR0A & UART_RX_COMPLETE_BITMASK)); // Wait for the next uart packet
-                TCCR1B &= CLOCK_OFF_BITMASK; // Stop the timer
-                uint8_t duration_l = TCNT1L; // Low byte must be read before the high byte
-                uint8_t duration_m = TCNT1H;
-                uint8_t duration_h = overflow_count;
+                while (!(UCSR0A & UART_RX_COMPLETE_BITMASK)) // Wait for the next uart packet
+                {
+                    // Poll the REC button. If pressed, ends the recording:
+                    if (switches & REC_SW_BITMASK)
+                    {
+                        if(!debounce(REC_SW_BITMASK)) break;
+
+                        // Clear the timer
+                        overflow_count = 0;
+                        TCNT1H = 0x00;
+                        TCNT1L = 0x00;
+                        // Update LCD
+                        
+                        uart_send(SYN_REC_END); // Inform the synthesizer of end-of-recording so it stops sending data
+                        mode = IDLE;
+                    }
+                }
+                    
+                // Once a UART packet is received...
                 uint8_t data = UDR0; // Read the data
-                
-                // Clear the timer
-                overflow_count = 0;
-                TCNT1H = 0x00;
-                TCNT1L = 0x00;
-                
-                // Start the timer
-                TCCR1B |= 0x02; // Prescaler of 1/8 from I/O clock
-                
-                // Send the duration followed by the command, MSB first
-                mem_write_autoaddress(duration_h);
-                mem_write_autoaddress(duration_m);
-                mem_write_autoaddress(duration_l);
-                mem_write_autoaddress(data);
-                
-                // TO DO: HANDLING FOR STOP COMMANDS / MULTI BYTE COMMANDS
+                if (!expecting_data) // Interpret as a command
+                {
+                    TCCR1B &= CLOCK_OFF_BITMASK; // Stop the timer
+                    uint8_t duration_l = TCNT1L; // Low byte must be read before the high byte
+                    uint8_t duration_m = TCNT1H;
+                    uint8_t duration_h = overflow_count;
+
+                    // Clear the timer
+                    overflow_count = 0;
+                    TCNT1H = 0x00;
+                    TCNT1L = 0x00;
+
+                    // Start the timer
+                    TCCR1B |= 0x02; // Prescaler of 1/8 from I/O clock
+
+                    // Send the duration followed by the command, MSB first
+                    mem_write_autoaddress(duration_h);
+                    mem_write_autoaddress(duration_m);
+                    mem_write_autoaddress(duration_l);
+                    mem_write_autoaddress(data);
+                    
+                    // Check if the command is followed by a data byte and set the flag accordingly
+                    if (data > 0x84) // Threshold for two-byte commands
+                    {
+                        expecting_data = 1;
+                    }
+                    else
+                    {
+                        expecting_data = 0;
+                    }
+                }
+                else // Interpret as data, send straight to memory
+                {
+                    // Send the data byte
+                    mem_write_autoaddress(data);
+                    expecting_data = 0;
+                }
+
                 break;
             case(PLAYBACK):
+                if (overflow_count == target_delay_overflow)
+                {
+                    // FINISH THIS
+                    // DO ONCE:
+                    
+                    waiting_for_compare_interrupt = 1;
+                    // FILL THIS IN: TO DO // Enable the compare match interrupt
+                    while(waiting_for_compare_interrupt)
+                    {
+                        asm("NOP"); 
+                    }
+                    
+                    
+                }
+                else
+                {
+                    // Poll inputs
+                }
+                
+                
                 break;
         }
         asm("NOP"); // DEBUG: Breakpoint location
@@ -176,10 +240,11 @@ void rec_startup_sequence()
 {
     // Initiate record mode
     // Clear the timer
+    TCCR1B &= CLOCK_OFF_BITMASK; // Stop the timer (should already be off)
     TCNT1H = 0x00;
     TCNT1L = 0x00;
-    
     overflow_count = 0x00; // Clear the overflow counter
+    
     mem_write_single(SYN_REC_START, addr_h, addr_m, 0x00); // Place a start command in memory
     local_addr = 1; // Reset the local_addr, starting at one to account for the start command at location zero
     uart_send(SYN_REC_START); // Send start recording command over UART
@@ -218,6 +283,12 @@ void rec_startup_sequence()
 
 void playback_startup_sequence()
 {
+    // Clear the timer
+    TCCR1B &= CLOCK_OFF_BITMASK; // Stop the timer (should already be off)
+    TCNT1H = 0x00;
+    TCNT1L = 0x00;
+    overflow_count = 0x00; // Clear the overflow counter
+    
     // TODO: IMPLEMENT
     uint8_t data = mem_read_single(addr_h, addr_m, 0x00); // Read 1st location in track mem
     if (data != SYN_REC_START) // Check if the track is blank or corrupted
@@ -235,7 +306,7 @@ void playback_startup_sequence()
         {
             uint8_t local_addr_h = ((local_addr & 0x0F00) >> 8);
             uint8_t temp_addr_m = addr_m | local_addr_h;
-            uint8_t data = mem_read_single(data, addr_h, temp_addr_m, (uint8_t)local_addr);
+            uint8_t data = mem_read_single(addr_h, temp_addr_m, (uint8_t)local_addr);
             local_addr++;
 
             // Startup done is signified by two sequential SYN_STARTUP_DONE bytes
@@ -244,7 +315,7 @@ void playback_startup_sequence()
             {
                 local_addr_h = ((local_addr & 0x0F00) >> 8);
                 temp_addr_m = addr_m | local_addr_h;
-                data = mem_read_single(data, addr_h, temp_addr_m, (uint8_t)local_addr);
+                data = mem_read_single(addr_h, temp_addr_m, (uint8_t)local_addr);
                 local_addr++;
                 if (data == SYN_STARTUP_DONE) // If this is a true startup complete market, no commands need to be sent to the synth
                 {
@@ -262,6 +333,16 @@ void playback_startup_sequence()
             }
         }
         mode = PLAYBACK;
+        
+        // Read the first delay
+        uint8_t local_addr_h = ((local_addr & 0x0F00) >> 8);
+        uint8_t temp_addr_m = addr_m | local_addr_h;
+        
+        target_delay_overflow = mem_read_start(addr_h, temp_addr_m, (uint8_t)local_addr);
+        target_delay_high = spi_read();
+        target_delay_low = spi_read();
+        
+        TCCR1B |= 0x02; // Start the timer with a prescaler of 1/8 from I/O clock
     }
 }
 
@@ -278,13 +359,13 @@ uint8_t debounce(uint8_t bitmask)
 {
     // Debounce
     _delay_ms(DEBOUNCE_DELAY);
-    uint8_t switches = PORTJ | (PORTF & PREV_BITMASK);
-    if (!(switches & PREV_BITMASK)) return FALSE;
+    uint8_t switches = PINJ | (PINF & PREV_BITMASK);
+    if (!(switches & bitmask)) return FALSE;
 
     // Wait for the button to be released
-    while(switches & PREV_BITMASK)
+    while(switches & bitmask)
     {
-        switches = PORTJ | (PORTF & PREV_BITMASK);
+        switches = PINJ | (PINF & PREV_BITMASK);
     }
     return TRUE;
 }
@@ -292,4 +373,10 @@ uint8_t debounce(uint8_t bitmask)
 ISR(TIMER1_OVF_vect)
 {
     overflow_count++;
+}
+
+ISR(TIMER1_COMPA_vect)
+{
+    // Disable the TIMER1 compare match interrupt
+    // FILL THIS IN
 }
