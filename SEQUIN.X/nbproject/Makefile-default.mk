@@ -94,62 +94,62 @@ MP_PROCESSOR_OPTION=ATmega3250A
 # ------------------------------------------------------------------------------------
 # Rules for buildStep: compile
 ifeq ($(TYPE_IMAGE), DEBUG_RUN)
-${OBJECTDIR}/main.o: main.c  .generated_files/flags/default/31a8b99cad66e91ab0ba5ddb08b4befe5e8ad794 .generated_files/flags/default/c1e3170f6c2f4ee99286804d8babe1b1bd4428ea
+${OBJECTDIR}/main.o: main.c  .generated_files/flags/default/15ae0f8ff6263162cc8a2142e36ba8093f6ec465 .generated_files/flags/default/c1e3170f6c2f4ee99286804d8babe1b1bd4428ea
 	@${MKDIR} "${OBJECTDIR}" 
 	@${RM} ${OBJECTDIR}/main.o.d 
 	@${RM} ${OBJECTDIR}/main.o 
 	${MP_CC} $(MP_EXTRA_CC_PRE) -mcpu=$(MP_PROCESSOR_OPTION) -c  -D__DEBUG=1 -g -DDEBUG  -gdwarf-2  -x c -D__$(MP_PROCESSOR_OPTION)__   -mdfp="${DFP_DIR}/xc8"  -Wl,--gc-sections -O0 -ffunction-sections -fdata-sections -fshort-enums -fno-common -funsigned-char -funsigned-bitfields -Wall -DXPRJ_default=$(CND_CONF)  $(COMPARISON_BUILD)  -gdwarf-3     -MD -MP -MF "${OBJECTDIR}/main.o.d" -MT "${OBJECTDIR}/main.o.d" -MT ${OBJECTDIR}/main.o -o ${OBJECTDIR}/main.o main.c 
 	
-${OBJECTDIR}/memory.o: memory.c  .generated_files/flags/default/4d8487d7e5af49e18d5398009b207063fa83601e .generated_files/flags/default/c1e3170f6c2f4ee99286804d8babe1b1bd4428ea
+${OBJECTDIR}/memory.o: memory.c  .generated_files/flags/default/f5213220e5f3cf40c3c703039192b7189933c5f4 .generated_files/flags/default/c1e3170f6c2f4ee99286804d8babe1b1bd4428ea
 	@${MKDIR} "${OBJECTDIR}" 
 	@${RM} ${OBJECTDIR}/memory.o.d 
 	@${RM} ${OBJECTDIR}/memory.o 
 	${MP_CC} $(MP_EXTRA_CC_PRE) -mcpu=$(MP_PROCESSOR_OPTION) -c  -D__DEBUG=1 -g -DDEBUG  -gdwarf-2  -x c -D__$(MP_PROCESSOR_OPTION)__   -mdfp="${DFP_DIR}/xc8"  -Wl,--gc-sections -O0 -ffunction-sections -fdata-sections -fshort-enums -fno-common -funsigned-char -funsigned-bitfields -Wall -DXPRJ_default=$(CND_CONF)  $(COMPARISON_BUILD)  -gdwarf-3     -MD -MP -MF "${OBJECTDIR}/memory.o.d" -MT "${OBJECTDIR}/memory.o.d" -MT ${OBJECTDIR}/memory.o -o ${OBJECTDIR}/memory.o memory.c 
 	
-${OBJECTDIR}/spi.o: spi.c  .generated_files/flags/default/e33a96e458f243bf894a052ab4891bd9392452e1 .generated_files/flags/default/c1e3170f6c2f4ee99286804d8babe1b1bd4428ea
+${OBJECTDIR}/spi.o: spi.c  .generated_files/flags/default/381b2f1c342758c9163e64207951db17edc83a68 .generated_files/flags/default/c1e3170f6c2f4ee99286804d8babe1b1bd4428ea
 	@${MKDIR} "${OBJECTDIR}" 
 	@${RM} ${OBJECTDIR}/spi.o.d 
 	@${RM} ${OBJECTDIR}/spi.o 
 	${MP_CC} $(MP_EXTRA_CC_PRE) -mcpu=$(MP_PROCESSOR_OPTION) -c  -D__DEBUG=1 -g -DDEBUG  -gdwarf-2  -x c -D__$(MP_PROCESSOR_OPTION)__   -mdfp="${DFP_DIR}/xc8"  -Wl,--gc-sections -O0 -ffunction-sections -fdata-sections -fshort-enums -fno-common -funsigned-char -funsigned-bitfields -Wall -DXPRJ_default=$(CND_CONF)  $(COMPARISON_BUILD)  -gdwarf-3     -MD -MP -MF "${OBJECTDIR}/spi.o.d" -MT "${OBJECTDIR}/spi.o.d" -MT ${OBJECTDIR}/spi.o -o ${OBJECTDIR}/spi.o spi.c 
 	
-${OBJECTDIR}/uart.o: uart.c  .generated_files/flags/default/e925a2758dd3ba47c789ee500a2546f2077ea1d .generated_files/flags/default/c1e3170f6c2f4ee99286804d8babe1b1bd4428ea
+${OBJECTDIR}/uart.o: uart.c  .generated_files/flags/default/743cf145799bc2d5ecb66f775b30406ed6347ae3 .generated_files/flags/default/c1e3170f6c2f4ee99286804d8babe1b1bd4428ea
 	@${MKDIR} "${OBJECTDIR}" 
 	@${RM} ${OBJECTDIR}/uart.o.d 
 	@${RM} ${OBJECTDIR}/uart.o 
 	${MP_CC} $(MP_EXTRA_CC_PRE) -mcpu=$(MP_PROCESSOR_OPTION) -c  -D__DEBUG=1 -g -DDEBUG  -gdwarf-2  -x c -D__$(MP_PROCESSOR_OPTION)__   -mdfp="${DFP_DIR}/xc8"  -Wl,--gc-sections -O0 -ffunction-sections -fdata-sections -fshort-enums -fno-common -funsigned-char -funsigned-bitfields -Wall -DXPRJ_default=$(CND_CONF)  $(COMPARISON_BUILD)  -gdwarf-3     -MD -MP -MF "${OBJECTDIR}/uart.o.d" -MT "${OBJECTDIR}/uart.o.d" -MT ${OBJECTDIR}/uart.o -o ${OBJECTDIR}/uart.o uart.c 
 	
-${OBJECTDIR}/gpio.o: gpio.c  .generated_files/flags/default/40b48f50eea35a3906fe101f94820a860fe2fa79 .generated_files/flags/default/c1e3170f6c2f4ee99286804d8babe1b1bd4428ea
+${OBJECTDIR}/gpio.o: gpio.c  .generated_files/flags/default/a70a44b5927e4b1b520f59da9ff9f4bd6ac310fc .generated_files/flags/default/c1e3170f6c2f4ee99286804d8babe1b1bd4428ea
 	@${MKDIR} "${OBJECTDIR}" 
 	@${RM} ${OBJECTDIR}/gpio.o.d 
 	@${RM} ${OBJECTDIR}/gpio.o 
 	${MP_CC} $(MP_EXTRA_CC_PRE) -mcpu=$(MP_PROCESSOR_OPTION) -c  -D__DEBUG=1 -g -DDEBUG  -gdwarf-2  -x c -D__$(MP_PROCESSOR_OPTION)__   -mdfp="${DFP_DIR}/xc8"  -Wl,--gc-sections -O0 -ffunction-sections -fdata-sections -fshort-enums -fno-common -funsigned-char -funsigned-bitfields -Wall -DXPRJ_default=$(CND_CONF)  $(COMPARISON_BUILD)  -gdwarf-3     -MD -MP -MF "${OBJECTDIR}/gpio.o.d" -MT "${OBJECTDIR}/gpio.o.d" -MT ${OBJECTDIR}/gpio.o -o ${OBJECTDIR}/gpio.o gpio.c 
 	
 else
-${OBJECTDIR}/main.o: main.c  .generated_files/flags/default/df18204b017f32999d6d38c0b44f6917534666f9 .generated_files/flags/default/c1e3170f6c2f4ee99286804d8babe1b1bd4428ea
+${OBJECTDIR}/main.o: main.c  .generated_files/flags/default/80addc81aba512ea8e1330158cd2a536e93595a6 .generated_files/flags/default/c1e3170f6c2f4ee99286804d8babe1b1bd4428ea
 	@${MKDIR} "${OBJECTDIR}" 
 	@${RM} ${OBJECTDIR}/main.o.d 
 	@${RM} ${OBJECTDIR}/main.o 
 	${MP_CC} $(MP_EXTRA_CC_PRE) -mcpu=$(MP_PROCESSOR_OPTION) -c  -x c -D__$(MP_PROCESSOR_OPTION)__   -mdfp="${DFP_DIR}/xc8"  -Wl,--gc-sections -O0 -ffunction-sections -fdata-sections -fshort-enums -fno-common -funsigned-char -funsigned-bitfields -Wall -DXPRJ_default=$(CND_CONF)  $(COMPARISON_BUILD)  -gdwarf-3     -MD -MP -MF "${OBJECTDIR}/main.o.d" -MT "${OBJECTDIR}/main.o.d" -MT ${OBJECTDIR}/main.o -o ${OBJECTDIR}/main.o main.c 
 	
-${OBJECTDIR}/memory.o: memory.c  .generated_files/flags/default/3723712993e173e4159b10969c5367660d630dc1 .generated_files/flags/default/c1e3170f6c2f4ee99286804d8babe1b1bd4428ea
+${OBJECTDIR}/memory.o: memory.c  .generated_files/flags/default/3e58aa4ee10fd62fcb9bd7a368fdc21fd8cc70c8 .generated_files/flags/default/c1e3170f6c2f4ee99286804d8babe1b1bd4428ea
 	@${MKDIR} "${OBJECTDIR}" 
 	@${RM} ${OBJECTDIR}/memory.o.d 
 	@${RM} ${OBJECTDIR}/memory.o 
 	${MP_CC} $(MP_EXTRA_CC_PRE) -mcpu=$(MP_PROCESSOR_OPTION) -c  -x c -D__$(MP_PROCESSOR_OPTION)__   -mdfp="${DFP_DIR}/xc8"  -Wl,--gc-sections -O0 -ffunction-sections -fdata-sections -fshort-enums -fno-common -funsigned-char -funsigned-bitfields -Wall -DXPRJ_default=$(CND_CONF)  $(COMPARISON_BUILD)  -gdwarf-3     -MD -MP -MF "${OBJECTDIR}/memory.o.d" -MT "${OBJECTDIR}/memory.o.d" -MT ${OBJECTDIR}/memory.o -o ${OBJECTDIR}/memory.o memory.c 
 	
-${OBJECTDIR}/spi.o: spi.c  .generated_files/flags/default/949055dd677257ca252859d736aaff9498671aef .generated_files/flags/default/c1e3170f6c2f4ee99286804d8babe1b1bd4428ea
+${OBJECTDIR}/spi.o: spi.c  .generated_files/flags/default/dc5b709bd227b5fab1e25b9b61d65202c83ae615 .generated_files/flags/default/c1e3170f6c2f4ee99286804d8babe1b1bd4428ea
 	@${MKDIR} "${OBJECTDIR}" 
 	@${RM} ${OBJECTDIR}/spi.o.d 
 	@${RM} ${OBJECTDIR}/spi.o 
 	${MP_CC} $(MP_EXTRA_CC_PRE) -mcpu=$(MP_PROCESSOR_OPTION) -c  -x c -D__$(MP_PROCESSOR_OPTION)__   -mdfp="${DFP_DIR}/xc8"  -Wl,--gc-sections -O0 -ffunction-sections -fdata-sections -fshort-enums -fno-common -funsigned-char -funsigned-bitfields -Wall -DXPRJ_default=$(CND_CONF)  $(COMPARISON_BUILD)  -gdwarf-3     -MD -MP -MF "${OBJECTDIR}/spi.o.d" -MT "${OBJECTDIR}/spi.o.d" -MT ${OBJECTDIR}/spi.o -o ${OBJECTDIR}/spi.o spi.c 
 	
-${OBJECTDIR}/uart.o: uart.c  .generated_files/flags/default/e23387e5f237e1f0ef650b51476f8ef82d595316 .generated_files/flags/default/c1e3170f6c2f4ee99286804d8babe1b1bd4428ea
+${OBJECTDIR}/uart.o: uart.c  .generated_files/flags/default/b4ac8419700ba686c05769646d7795cb36d3528b .generated_files/flags/default/c1e3170f6c2f4ee99286804d8babe1b1bd4428ea
 	@${MKDIR} "${OBJECTDIR}" 
 	@${RM} ${OBJECTDIR}/uart.o.d 
 	@${RM} ${OBJECTDIR}/uart.o 
 	${MP_CC} $(MP_EXTRA_CC_PRE) -mcpu=$(MP_PROCESSOR_OPTION) -c  -x c -D__$(MP_PROCESSOR_OPTION)__   -mdfp="${DFP_DIR}/xc8"  -Wl,--gc-sections -O0 -ffunction-sections -fdata-sections -fshort-enums -fno-common -funsigned-char -funsigned-bitfields -Wall -DXPRJ_default=$(CND_CONF)  $(COMPARISON_BUILD)  -gdwarf-3     -MD -MP -MF "${OBJECTDIR}/uart.o.d" -MT "${OBJECTDIR}/uart.o.d" -MT ${OBJECTDIR}/uart.o -o ${OBJECTDIR}/uart.o uart.c 
 	
-${OBJECTDIR}/gpio.o: gpio.c  .generated_files/flags/default/3be0d35cf7218b045bd210e4b502802a2de9d11c .generated_files/flags/default/c1e3170f6c2f4ee99286804d8babe1b1bd4428ea
+${OBJECTDIR}/gpio.o: gpio.c  .generated_files/flags/default/b7a91600af7f74bae4e56c9f86b4f8ba06673c74 .generated_files/flags/default/c1e3170f6c2f4ee99286804d8babe1b1bd4428ea
 	@${MKDIR} "${OBJECTDIR}" 
 	@${RM} ${OBJECTDIR}/gpio.o.d 
 	@${RM} ${OBJECTDIR}/gpio.o 
