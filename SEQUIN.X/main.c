@@ -1,14 +1,13 @@
 // SEQUIN
-// 9/11/2022
+// 9/25/2022
 // Dylan Ogrodowski
-// Version 0.12
+// Version 0.13
 
 // TO DO:
-// RECORD LED AND PLAYBACK LED NOT YET CONFIGURED
+// RECORD LED AND PLAYBACK LED CONFIGURATION
 // ADC0 will be designated replacement for PREV
 // New rx receiver logic
 // If prev data exists, clear mem
-// TO DO: HANDLING FOR STOP COMMANDS / MULTI BYTE COMMANDS during recording
 
 #include <avr/io.h>
 #include <avr/interrupt.h>
@@ -186,14 +185,29 @@ int main(void)
                     // FINISH THIS
                     // DO ONCE:
                     
-                    waiting_for_compare_interrupt = 1;
-                    // FILL THIS IN: TO DO // Enable the compare match interrupt
+                    waiting_for_compare_interrupt = 1; // Cleared in interrupt
+                    TIMSK1 |= 0x02; // Enable the compare match interrupt
                     while(waiting_for_compare_interrupt)
                     {
                         asm("NOP"); 
                     }
                     
+                    uint8_t command = spi_read(); // Read command from external memory
+                    uart_send(command); // Send the command to the synth
+                    if (command > 0x84) // Threshold for two-byte commands
+                    {
+                        uint8_t data = spi_read(); // Read the attached data (if applicable) from external memory
+                        uart_send(data);
+                    }
+
+                    // Read timing from external memory for next cycle
+                    target_delay_overflow = spi_read(); 
+                    target_delay_high = spi_read(); // Read high byte for CMPA of TIMER1 from memory
+                    target_delay_low = spi_read();  // Read the next timing from external memory
                     
+                    overflow_count = 0; // Set overflow count to zero 
+                    OCR1AH = target_delay_high; // Set the compare match target
+                    OCR1AL = target_delay_low; // Set the compare match target
                 }
                 else
                 {
@@ -339,8 +353,11 @@ void playback_startup_sequence()
         uint8_t temp_addr_m = addr_m | local_addr_h;
         
         target_delay_overflow = mem_read_start(addr_h, temp_addr_m, (uint8_t)local_addr);
-        target_delay_high = spi_read();
-        target_delay_low = spi_read();
+        target_delay_high = spi_read(); // Read high byte for CMPA of TIMER1 from memory
+        target_delay_low = spi_read(); // Read low byte for CMPA of TIMER1 from memory
+        
+        OCR1AH = target_delay_high; // Preconfigure CMPA for first delay cycle
+        OCR1AL = target_delay_low; // Preconfigure CMPA for first delay cycle
         
         TCCR1B |= 0x02; // Start the timer with a prescaler of 1/8 from I/O clock
     }
@@ -354,7 +371,7 @@ void mem_write_autoaddress(uint8_t data)
     local_addr++;
 }
 
-// Returns FALSE if the press was a bounce, TRUE otherwise 
+// Returns FALSE (0) if the press was a bounce, TRUE (1) otherwise 
 uint8_t debounce(uint8_t bitmask)
 {
     // Debounce
@@ -377,6 +394,6 @@ ISR(TIMER1_OVF_vect)
 
 ISR(TIMER1_COMPA_vect)
 {
-    // Disable the TIMER1 compare match interrupt
-    // FILL THIS IN
+    waiting_for_compare_interrupt = 0; // Clear wait flag
+    TIMSK1 &= 0xFD; // Disable the TIMER1 compare match interrupt
 }
