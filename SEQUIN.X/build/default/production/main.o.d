@@ -17,7 +17,7 @@ build/default/production/main.o.d build/default/production/main.o: main.c \
  c:\program\ files\microchip\xc8\v2.36\avr\avr\include\util\delay.h \
  c:\program\ files\microchip\xc8\v2.36\avr\avr\include\util\delay_basic.h \
  c:\program\ files\microchip\xc8\v2.36\avr\avr\include\math.h memory.h \
- spi.h uart.h commands.h gpio.h
+ spi.h uart.h commands.h led.h gpio.h
 
 c:\program\ files\microchip\xc8\v2.36\avr\avr\include\avr\io.h:
 
@@ -62,5 +62,7 @@ spi.h:
 uart.h:
 
 commands.h:
+
+led.h:
 
 gpio.h:

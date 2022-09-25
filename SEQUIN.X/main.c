@@ -1,10 +1,10 @@
 // SEQUIN
 // 9/25/2022
 // Dylan Ogrodowski
-// Version 0.13
+// Version 0.14
 
 // TO DO:
-// RECORD LED AND PLAYBACK LED CONFIGURATION
+// LAYBACK LED CONFIGURATION
 // ADC0 will be designated replacement for PREV
 // New rx receiver logic
 // If prev data exists, clear mem
@@ -15,6 +15,7 @@
 #include "memory.h"
 #include "uart.h"
 #include "commands.h"
+#include "led.h"
 #include "gpio.h"
 
 FUSES = {
@@ -69,6 +70,9 @@ uint8_t switches = 0;
 
 uint8_t expecting_data = 0; // Flag that is set when a two-byte command is received, and cleared when the data byte is read
 
+uint8_t set_key = 0; // Flag for two-byte key/LED on cycle
+uint8_t clear_key = 0; // Flag for two-byte key/LED off cycle
+
 int main(void) 
 {
     init_GPIO();
@@ -77,6 +81,12 @@ int main(void)
     init_uart();
     
     uint8_t manufacturer_ID = mem_manufacturer_ID(); // DEBUG: Memory test
+    
+    // LED test sequence
+    led_on(0);
+    led_on(3);
+    led_on(35);
+    led_on(36);
     
     /*
     // Memory test sequence
@@ -159,12 +169,21 @@ int main(void)
                     mem_write_autoaddress(duration_h);
                     mem_write_autoaddress(duration_m);
                     mem_write_autoaddress(duration_l);
-                    mem_write_autoaddress(data);
+                    mem_write_autoaddress(data); // This is the command
                     
                     // Check if the command is followed by a data byte and set the flag accordingly
                     if (data > 0x84) // Threshold for two-byte commands
                     {
                         expecting_data = 1;
+                        if (data == SYN_SET_KEY)
+                        {
+                            set_key = 1; // Set a flag for LED control on next UART receive cycle
+                        }
+                        else if (data == SYN_CLEAR_KEY)
+                        {
+                            clear_key = 1; // Set a flag for LED control on next UART receive cycle
+                        }
+                        
                     }
                     else
                     {
@@ -176,15 +195,20 @@ int main(void)
                     // Send the data byte
                     mem_write_autoaddress(data);
                     expecting_data = 0;
+                    if (set_key)
+                    {
+                        led_on(data);
+                    }
+                    else if (clear_key)
+                    {
+                        led_off(data);
+                    }
                 }
 
                 break;
             case(PLAYBACK):
                 if (overflow_count == target_delay_overflow)
-                {
-                    // FINISH THIS
-                    // DO ONCE:
-                    
+                {         
                     waiting_for_compare_interrupt = 1; // Cleared in interrupt
                     TIMSK1 |= 0x02; // Enable the compare match interrupt
                     while(waiting_for_compare_interrupt)

@@ -14,7 +14,4 @@ void uart_send(uint8_t data)
 {
     while(!(UCSR0A & UART_DATA_EMPTY_BITMASK)); // Wait for the previous transmission to complete, if any
     UDR0 = data;
-    uint8_t temp_debug = UCSR0A;
-    asm("NOP");
-    asm("NOP");
 }

@@ -6,9 +6,10 @@
                    projectFiles="true">
       <itemPath>memory.h</itemPath>
       <itemPath>spi.h</itemPath>
-      <itemPath>uart.h</itemPath>
       <itemPath>commands.h</itemPath>
       <itemPath>gpio.h</itemPath>
+      <itemPath>uart.h</itemPath>
+      <itemPath>led.h</itemPath>
     </logicalFolder>
     <logicalFolder name="LinkerScript"
                    displayName="Linker Files"
@@ -22,6 +23,7 @@
       <itemPath>spi.c</itemPath>
       <itemPath>uart.c</itemPath>
       <itemPath>gpio.c</itemPath>
+      <itemPath>led.c</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"
